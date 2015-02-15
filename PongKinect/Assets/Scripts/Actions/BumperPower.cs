@@ -11,8 +11,6 @@ public class BumperPower : MonoBehaviour {
     [SerializeField]
     private string TagToBump = "Ball";
     [SerializeField]
-    private int whoSetScore = 0;
-    [SerializeField]
     private int ScoreBonus = 0;
 	// Use this for initialization
 	void Start () {
@@ -25,16 +23,20 @@ public class BumperPower : MonoBehaviour {
 	}
     void OnCollisionEnter(Collision collision) 
     {
+        if(GM.isFinish())
+            return;
         GameObject go = collision.gameObject;
         if (go.tag.Equals(TagToBump))
         {
             if (gameObject.tag.Equals(GM.getTagToSetScore()))
             {
-                GM.addScorePlayer(whoSetScore, GM.getCurrentScore());
-                GM.setCurrentScore(0);
+                GM.startNewLap();
             }
             else
+            {
                 GM.addCurrentScore(ScoreBonus);
+                GM.setCurrentScoreDisplay(GM.getCurrentScore());
+            }
 
             Vector3 vel = go.rigidbody.velocity;
             go.rigidbody.velocity = vel.normalized * MultiplyPower;

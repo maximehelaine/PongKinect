@@ -12,16 +12,19 @@ public class MouvementFlippers : MonoBehaviour
     public static MouvementFlippers Instance { get; private set; }
 
     public bool isAnimated;
-    public  Animator animLeft;
-    public Animator animRight;
+    public  Animator animLeft1;
+    public Animator animLeft2;
+    public Animator animRight1;
+    public Animator animRight2;
 
     public KinectWrapper.NuiSkeletonPositionIndex TrackedJoint = KinectWrapper.NuiSkeletonPositionIndex.HandRight;
-	public GameObject OverlayObject;
+	public GameObject[] Flippers = new GameObject[2];
+
+    public float[] _rangeMouvementFlippers = new float[2];
 	public float smoothFactor = 5f;
 	
-	public GUIText debugText;
 
-	private float distanceToCamera = 10f;
+	private float[] distanceToCamera = {10f,10f};
 
     void Awake()
     {
@@ -29,28 +32,31 @@ public class MouvementFlippers : MonoBehaviour
     }
     void Start()
     {
-        animLeft.enabled = isAnimated;
-        if (OverlayObject)
-        {
-            distanceToCamera = (OverlayObject.transform.position - Camera.main.transform.position).magnitude;
-        }
+        animLeft1.enabled = isAnimated;
+        animRight1.enabled = isAnimated;
+        animLeft2.enabled = isAnimated;
+        animRight2.enabled = isAnimated;
+        for (int i = 0; i < Flippers.Length; i++ )
+            if (Flippers[i])
+                distanceToCamera[i] = (Flippers[i].transform.position - Camera.main.transform.position).magnitude;
     }
     public void mouvLeftFlipper()
     {
         if(!isAnimated)
             return;
-        animLeft.Play("leftflipper", 0);
+        animLeft1.Play("leftflipper", 0);
+        animRight2.Play("rightflipper", 0);
     }
     public void mouvRightFlipper()
     {
         if (!isAnimated)
             return;
-        animRight.Play("rightflipper", 0);
+        animRight1.Play("rightflipper", 0);
+        animLeft2.Play("leftflipper", 0);
     }
 
     void Update()
     {
-        
         //Activation de l'animation des flippers si utilisation du clavier et pas de la kinect
         if (Input.GetKeyDown(KeyCode.LeftArrow))
         {
@@ -89,17 +95,16 @@ public class MouvementFlippers : MonoBehaviour
                         //						Vector3 localPos = new Vector3(scaleX * 10f - 5f, 0f, scaleY * 10f - 5f); // 5f is 1/2 of 10f - size of the plane
                         //						Vector3 vPosOverlay = backgroundImage.transform.TransformPoint(localPos);
                         //Vector3 vPosOverlay = BottomLeft + ((vRight * scaleX) + (vUp * scaleY));
-
-                        if (debugText)
+                        for (int i = 0; i < Flippers.Length; i++)
                         {
-                            debugText.guiText.text = "Tracked user ID: " + userId;  // new Vector2(scaleX, scaleY).ToString();
-                        }
-
-                        if (OverlayObject)
-                        {
-                            Vector3 vPosOverlay = Camera.main.ViewportToWorldPoint(new Vector3(scaleX, scaleY, distanceToCamera));
-                            Vector3 newPosFlippers = new Vector3(vPosOverlay.x, OverlayObject.transform.position.y, OverlayObject.transform.position.z);
-                            OverlayObject.transform.position = Vector3.Lerp(OverlayObject.transform.position, newPosFlippers, smoothFactor * Time.deltaTime);
+                            if (Flippers[i])
+                            {
+                                Vector3 vPosOverlay = Camera.main.ViewportToWorldPoint(new Vector3(scaleX, scaleY, distanceToCamera[i]));
+                                Vector3 newPosFlippers = new Vector3(vPosOverlay.x, Flippers[i].transform.position.y, Flippers[i].transform.position.z);
+                                Debug.Log(Mathf.Abs(newPosFlippers.x - _rangeMouvementFlippers[0]) + "  " + Mathf.Abs(newPosFlippers.x - _rangeMouvementFlippers[0]));
+                                if (_rangeMouvementFlippers[0] <= newPosFlippers.x && _rangeMouvementFlippers[1] >= newPosFlippers.x)
+                                    Flippers[i].transform.position = Vector3.Lerp(Flippers[i].transform.position, newPosFlippers, smoothFactor * Time.deltaTime);
+                            }
                         }
                     }
                 }
