@@ -31,6 +31,7 @@ public class BumperPower : MonoBehaviour {
             if (gameObject.tag.Equals(GM.getTagToSetScore()))
             {
                 GM.startNewLap();
+                return;
             }
             else
             {
@@ -39,7 +40,10 @@ public class BumperPower : MonoBehaviour {
             }
 
             Vector3 vel = go.rigidbody.velocity;
-            go.rigidbody.velocity = vel.normalized * MultiplyPower;
+            Debug.Log(vel.magnitude + MultiplyPower);
+            if (vel.magnitude + MultiplyPower > 25)
+                return;
+            go.rigidbody.AddForce(vel.normalized * MultiplyPower, ForceMode.VelocityChange);
         }
         
 	}

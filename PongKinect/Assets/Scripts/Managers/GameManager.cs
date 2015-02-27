@@ -38,10 +38,14 @@ public class GameManager : MonoBehaviour {
     private Text _textLifePlayer;
     [SerializeField]
     private GameObject _panelFinishGame;
-
+    [SerializeField]
+    private GameObject[] _BonusImage = new GameObject[0];
+    [SerializeField]
+    private float _coolDownBonus = 0;
     //private Members
     private bool _isFinish = false;
-
+    private bool _oneBonusisActive = false;
+    private float _timeStamp = 0;
     // Use this for initialization
 	void Start () {
         
@@ -49,7 +53,11 @@ public class GameManager : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-	
+        if (!_oneBonusisActive && (_timeStamp == 0 || Time.time >= _timeStamp + _coolDownBonus))
+        {
+            setActiveBonus();
+            _timeStamp = Time.time;
+        }
 	}
 
     void FixedUpdate()
@@ -116,10 +124,24 @@ public class GameManager : MonoBehaviour {
     //Ball Functions
     public void impulseBall(Vector3 direction, float value)
     {
-        _ballRigibody.AddForce(direction * value, ForceMode.Impulse);
+        if (_ballRigibody.velocity.magnitude + value > 25)
+            return;
+        _ballRigibody.AddForce(direction * value, ForceMode.VelocityChange);
     }
     public void resetPositionBall()
     {
         _ballTransform.position = new Vector3(_startBallTransform.position.x, _startBallTransform.position.y, _startBallTransform.position.z); 
+    }
+
+    //Bonus Functions
+    public void setActiveBonus()
+    {
+        int randomId = Random.Range(0, _BonusImage.Length - 1);
+        _BonusImage[randomId].SetActive(true);
+        _oneBonusisActive = true;
+    }
+    public void setoneBonusIsAction(bool value)
+    {
+        _oneBonusisActive = value;
     }
 }

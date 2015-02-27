@@ -95,13 +95,13 @@ public class MouvementFlippers : MonoBehaviour
                         //						Vector3 localPos = new Vector3(scaleX * 10f - 5f, 0f, scaleY * 10f - 5f); // 5f is 1/2 of 10f - size of the plane
                         //						Vector3 vPosOverlay = backgroundImage.transform.TransformPoint(localPos);
                         //Vector3 vPosOverlay = BottomLeft + ((vRight * scaleX) + (vUp * scaleY));
+                        Vector3 vPosOverlay = Camera.main.ViewportToWorldPoint(new Vector3(scaleX, scaleY, distanceToCamera[0]));
+                        
                         for (int i = 0; i < Flippers.Length; i++)
                         {
                             if (Flippers[i])
                             {
-                                Vector3 vPosOverlay = Camera.main.ViewportToWorldPoint(new Vector3(scaleX, scaleY, distanceToCamera[i]));
                                 Vector3 newPosFlippers = new Vector3(vPosOverlay.x, Flippers[i].transform.position.y, Flippers[i].transform.position.z);
-                                Debug.Log(Mathf.Abs(newPosFlippers.x - _rangeMouvementFlippers[0]) + "  " + Mathf.Abs(newPosFlippers.x - _rangeMouvementFlippers[0]));
                                 if (_rangeMouvementFlippers[0] <= newPosFlippers.x && _rangeMouvementFlippers[1] >= newPosFlippers.x)
                                     Flippers[i].transform.position = Vector3.Lerp(Flippers[i].transform.position, newPosFlippers, smoothFactor * Time.deltaTime);
                             }

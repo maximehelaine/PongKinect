@@ -1,9 +1,9 @@
-﻿/*ing UnityEngine;
+﻿using UnityEngine;
 using System.Collections;
 
 public class MouvementBall : MonoBehaviour {
     [SerializeField]
-    private float MinVelocity = 1.0f;
+    private float MinVelocity = 5.0f;
 
 	// Use this for initialization
 	void Start () {
@@ -22,4 +22,4 @@ public class MouvementBall : MonoBehaviour {
             rigidbody.velocity = vel.normalized * MinVelocity;
     }
 
-}*/
+}
